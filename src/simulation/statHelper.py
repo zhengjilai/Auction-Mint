@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.stats import geom
+from scipy.stats import geom, norm
 import math
 
 '''
@@ -12,14 +12,25 @@ def sample_from_geometric_distribution(e, N):
     # geometry distribution parameter
     p = 1.0 / e
 
-    # sample N bids from geometric distribution
-    r = geom.rvs(p, size = N)
+    while True:
 
-    # calculate the average of all N sampled data point
-    feedback = math.floor(r.mean())
-    print(feedback)
+        # sample N bids from geometric distribution
+        r = geom.rvs(p, size = N)
+
+        # calculate the average of all N sampled data point
+        feedback = math.floor(r.mean())
+
+        if feedback > 0:
+           break
+
     return feedback
 
 
+def sample_from_norm_distribution(loc, scale):
 
-sample_from_geometric_distribution(1000000, 10)
+    return norm.rvs(loc=loc, scale=scale, size=1)[0]
+
+
+if __name__ == '__main__':
+    print(sample_from_geometric_distribution(1000000, 10))
+    print(sample_from_norm_distribution(0,1))

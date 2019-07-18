@@ -1,10 +1,11 @@
 import numpy as np
 from .statHelper import *
+from .draw import *
 
 # class for aucMint simulation
 class Simulation:
 
-    def __init__(self, tb, br, me):
+    def __init__(self, tb, br, me, bw):
 
         # system total balance
         self.totalBalance = tb
@@ -16,13 +17,13 @@ class Simulation:
         self.miningExpense = me
 
         # the number of bid winners
-        self.bidWinner = 10
+        self.bidWinner = bw
 
         # the transaction fee predicted from former rounds,
         # initialized as 0.000000001 * totalBalance
-        self.transactionFeePredict = 0.000000001 * self.totalBalance
+        self.transactionFeePredict = 0.00004 * self.totalBalance
         # the number of former rounds used to predict the next round transaction fee
-        self.predictRoundNumber = 1000
+        self.predictRoundNumber = 20
 
         # simulation round
         # initialized as 1
@@ -47,7 +48,7 @@ class Simulation:
 
         # update totalBalance and transaction fee for the next round
         self.__update_total_balance(bidPrice)
-        self.__update_predict_transaction_fee()
+        self.__update_predict_transaction_fee_from_total_balance()
 
         # update round number
         self.round += 1
@@ -55,7 +56,7 @@ class Simulation:
     def __calculate_bid(self):
 
         # number of sampling
-        sampleTimes = self.bidWinner * 3
+        sampleTimes = self.bidWinner * 20
 
         # sample mining cost from geometric distribution
         miningCost = sample_from_geometric_distribution(self.miningExpense, sampleTimes)
@@ -71,7 +72,7 @@ class Simulation:
         # in each round, token for bid will burnt
         self.totalBalance -= (self.bidWinner * bidPrice)
 
-    def __update_predict_transaction_fee(self):
+    def __update_predict_transaction_fee_with_former_fee(self):
 
         # calc the predicted tx fee for the next round
         # before self.predictRoundNumber, minus txfee in round 0
@@ -87,6 +88,21 @@ class Simulation:
         # modify the prediction with Fisher equation of exchange
         self.transactionFeePredict = feeMidCalc / self.result[self.round][1] * self.totalBalance
 
-    def show_result(self):
+    def __update_predict_transaction_fee_from_total_balance(self):
+
+        # calc the predicted tx fee for the next round
+
+        # the multiple between total balance and fee, with Fisher Equation
+        rate = self.result[0][1] / self.result[0][3]
+        # calculate the expected tx fee from total balance
+        expectedFee = self.totalBalance / rate
+        # sample from nor distribution
+        self.transactionFeePredict = sample_from_norm_distribution(expectedFee, expectedFee / 40)
+
+    def print_result(self):
 
         print(self.result)
+
+    def draw_time_series(self):
+
+        drawAll(self.result)
