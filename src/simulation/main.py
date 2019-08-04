@@ -14,23 +14,23 @@ if __name__ == '__main__':
     # the expected mining expense for a single bidder
     miningExpense = 0.000006 * totalBalance
 
+    # the transaction fees of the first round
+    transactionFees = 0.00005 * totalBalance
+
     # the number of bid winners
     bidWinner = 10
 
     # the simulation object
-    simulation = Simulation(totalBalance, blockReward, miningExpense, bidWinner)
+    simulation = Simulation(totalBalance, blockReward, miningExpense, bidWinner, transactionFees)
 
     # simulate round by round
     totalRound = 350000
     for i in range(totalRound):
         simulation.single_round()
+
+        # show simulation round
         if i % 1000 == 0:
             print(i)
-        if i == 100000:
-            simulation.totalBalance *= 0.95
-        if i == 200000:
-            simulation.totalBalance *= 1.05
-
 
     simulation.draw_time_series()
 

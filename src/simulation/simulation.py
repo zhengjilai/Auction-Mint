@@ -2,10 +2,11 @@ import numpy as np
 from .statHelper import *
 from .draw import *
 
+
 # class for aucMint simulation
 class Simulation:
 
-    def __init__(self, tb, br, me, bw):
+    def __init__(self, tb, br, me, bw, tf):
 
         # system total balance
         self.totalBalance = tb
@@ -19,9 +20,8 @@ class Simulation:
         # the number of bid winners
         self.bidWinner = bw
 
-        # the transaction fee predicted from former rounds,
-        # initialized as 0.000000001 * totalBalance
-        self.transactionFeePredict = 0.00004 * self.totalBalance
+        # the transaction fee predicted from total balance,
+        self.transactionFeePredict = tf
         # the number of former rounds used to predict the next round transaction fee
         self.predictRoundNumber = 20
 
@@ -50,6 +50,10 @@ class Simulation:
         self.__update_total_balance(bidPrice)
         self.__update_predict_transaction_fee_from_total_balance()
 
+        # make perturbations
+        perturbation_type = 0
+        self.__make_perturbations(perturbation_type)
+
         # update round number
         self.round += 1
 
@@ -72,6 +76,7 @@ class Simulation:
         # in each round, token for bid will burnt
         self.totalBalance -= (self.bidWinner * bidPrice)
 
+    # deprecated
     def __update_predict_transaction_fee_with_former_fee(self):
 
         # calc the predicted tx fee for the next round
@@ -98,6 +103,18 @@ class Simulation:
         expectedFee = self.totalBalance / rate
         # sample from nor distribution
         self.transactionFeePredict = sample_from_norm_distribution(expectedFee, expectedFee / 40)
+
+    def __make_perturbations(self, perturbation_type):
+
+        # perturbation type decides which kind of perturbation will be deployed
+        # 0 indicates instant increase/decrease in
+        if perturbation_type == 0:
+            if self.round == 100000:
+                self.totalBalance *= 0.975
+            if self.round == 200000:
+                self.totalBalance *= 1.025
+        else:
+            pass
 
     def print_result(self):
 
