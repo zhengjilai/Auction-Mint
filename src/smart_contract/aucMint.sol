@@ -355,8 +355,8 @@ contract aucMint is ERC20Modified{
         if (seasonableAddresses.length > bidWinnerNumber){
             // sort seasonableAddresses according to its bid value, in descending order
             quickSort(0,seasonableAddresses.length - 1, round);
-            // true bid value will be the value of the poorest bid winner
-            uint trueBidValue = roundAddressToBid[seasonableAddresses[bidWinnerNumber - 1]][round].trueValue;
+            // true bid value will be the value of the first bid loser
+            uint trueBidValue = roundAddressToBid[seasonableAddresses[bidWinnerNumber]][round].trueValue;
             // the bid winners
             for (uint i = 0; i < bidWinnerNumber; i++){
                 // every bidder winner shares transactionFee(unfreeze)
