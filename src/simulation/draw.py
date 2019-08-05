@@ -5,19 +5,23 @@ import numpy as np
 draw all time series graph
 @:param result the result calculated from simulation
 '''
-def drawAll(result):
+def draw_all(result):
     rounds = result[:, 0]
     total_balance = result[:, 1]
-    drawPlain(axis_x=rounds, axis_y=total_balance, label_x="Round Number", label_y="Total Supply")
+    draw_plain(axis_x=rounds, axis_y=total_balance, label_x="Round Number", label_y="Total Supply")
 
     bid_price = result[:, 2]
-    drawAverageAsLight(axis_x=rounds, axis_y=bid_price, label_x="Round Number", label_y="Bid Price")
+    draw_average_as_light(axis_x=rounds, axis_y=bid_price, label_x="Round Number", label_y="Bid Price")
 
     transaction_fee = result[:, 3]
-    drawAverageAsLight(axis_x=rounds, axis_y=transaction_fee, label_x="Round Number", label_y="Transaction Fees")
+    draw_average_as_light(axis_x=rounds, axis_y=transaction_fee, label_x="Round Number", label_y="Transaction Fees")
 
 
-def drawAverageAsLight(axis_x, axis_y, label_x="label_x", label_y="label_y"):
+'''
+draw time series of color pink from axis_x and axis_y
+with an additional average line of color firebrick 
+'''
+def draw_average_as_light(axis_x, axis_y, label_x="label_x", label_y="label_y"):
 
     # draw the original data
     plt.plot(axis_x, axis_y, color="pink")
@@ -35,7 +39,10 @@ def drawAverageAsLight(axis_x, axis_y, label_x="label_x", label_y="label_y"):
     plt.show()
 
 
-def drawPlain(axis_x, axis_y, label_x="label_x", label_y="label_y"):
+'''
+draw time series of color firebrick from axis_x and axis_y
+'''
+def draw_plain(axis_x, axis_y, label_x="label_x", label_y="label_y"):
 
     # draw the original data
     plt.plot(axis_x, axis_y, color="firebrick")
