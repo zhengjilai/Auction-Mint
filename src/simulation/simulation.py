@@ -24,7 +24,7 @@ class Simulation:
 
         # the transaction fee predicted from total balance,
         self.transactionFeePredict = tf
-        self.fisherCoefficient = (tf / tb)
+        self.fisherCoefficient = tf / tb
         # the number of former rounds used to predict the next round transaction fee
         self.predictRoundNumber = 100
 
@@ -106,8 +106,6 @@ class Simulation:
                           - self.result[self.round - self.predictRoundNumber][3]
                           + self.result[self.round][3]) / self.predictRoundNumber
 
-
-
         # modify the prediction with Fisher equation of exchange
         return feeMidCalc / self.result[self.round][1] * self.totalBalance
 
@@ -140,10 +138,10 @@ class Simulation:
             elif self.round == 200000:
                 self.totalBalance *= 1.025
         elif perturbation_type == 1:
-            if 150000 < self.round < 200000:
-                self.transactionFeePredict *= (1 + 0.1 * (self.round - 150000) / 50000)
-            elif self.round >= 200000:
-                self.transactionFeePredict *= 1.1
+            if self.round == 100000:
+                self.fisherCoefficient *= 1.05
+            elif self.round == 200000:
+                self.fisherCoefficient /= 1.05
         else:
             pass
 
