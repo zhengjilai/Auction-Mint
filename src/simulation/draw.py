@@ -1,11 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.ticker as mticker
 
 '''
 draw all time series graph
 @:param result the result calculated from simulation
 '''
 def draw_all(result):
+
     rounds = result[:, 0]
     total_balance = result[:, 1]
     draw_plain(axis_x=rounds, axis_y=total_balance, label_x="Round Number", label_y="Total Supply")
@@ -23,19 +25,29 @@ with an additional average line of color firebrick
 '''
 def draw_average_as_light(axis_x, axis_y, label_x="label_x", label_y="label_y"):
 
+    fig, ax = plt.subplots(1)
+
     # draw the original data
-    plt.plot(axis_x, axis_y, color="pink")
+    ax.plot(axis_x[1:], axis_y[1:], color="pink")
 
     # the round number to calculate average
-    average_round = 300
+    average_round = 400
     # calculate average for original data
     aver_axis_y = np.array([sum(axis_y[i-average_round//2:i+average_round//2])/average_round
                  for i in range(average_round//2, len(axis_y)-average_round//2)])
 
     # draw the averaged data
-    plt.plot(axis_x[average_round//2: len(axis_y)-average_round//2], aver_axis_y, color="firebrick")
-    plt.xlabel(label_x)
-    plt.ylabel(label_y)
+    ax.plot(axis_x[average_round//2: len(axis_y)-average_round//2], aver_axis_y, color="firebrick")
+    ax.set_xlabel(label_x)
+    ax.set_ylabel(label_y)
+    formatter = mticker.ScalarFormatter(useMathText=True)
+    formatter.set_scientific(True)
+    formatter.set_powerlimits((-1, 1))
+    ax.yaxis.set_major_formatter(formatter)
+    formatter2 = mticker.ScalarFormatter(useMathText=True)
+    formatter2.set_scientific(True)
+    formatter2.set_powerlimits((-1, 1))
+    ax.xaxis.set_major_formatter(formatter2)
     plt.show()
 
 
@@ -45,8 +57,19 @@ draw time series of color firebrick from axis_x and axis_y
 def draw_plain(axis_x, axis_y, label_x="label_x", label_y="label_y"):
 
     # draw the original data
-    plt.plot(axis_x, axis_y, color="firebrick")
-    plt.xlabel(label_x)
-    plt.ylabel(label_y)
+    fig, ax = plt.subplots(1)
+
+    ax.plot(axis_x, axis_y, color="firebrick")
+    ax.set_xlabel(label_x)
+    ax.set_ylabel(label_y)
+
+    formatter = mticker.ScalarFormatter(useMathText=True)
+    formatter.set_scientific(True)
+    formatter.set_powerlimits((-1, 1))
+    ax.yaxis.set_major_formatter(formatter)
+    formatter2 = mticker.ScalarFormatter(useMathText=True)
+    formatter2.set_scientific(True)
+    formatter2.set_powerlimits((-1, 1))
+    ax.xaxis.set_major_formatter(formatter2)
     plt.show()
 

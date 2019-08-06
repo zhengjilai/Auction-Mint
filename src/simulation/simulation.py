@@ -36,7 +36,8 @@ class Simulation:
         # the exchange coefficient update rate
         # Here we assume that the expected exchangeCoeff = updateRate * sqrt(totalBalance),
         # where updateRate is a constant
-        self.exchangeCoefficientUpdateRate = self.exchangeCoefficient / math.sqrt(tb)
+        self.epsilon = 0.5
+        self.exchangeCoefficientUpdateRate = self.exchangeCoefficient / math.pow(self.totalBalance, self.epsilon)
 
         # the number of former rounds used to predict the next round transaction fee
         self.predictRoundNumber = 100
@@ -161,7 +162,7 @@ class Simulation:
         # calc the exchange coefficient for the next round
         update_rate = 1/15000
         # gradually update exchangeCoefficient to the expected one
-        self.exchangeCoefficient += (self.exchangeCoefficientUpdateRate * math.sqrt(self.totalBalance)
+        self.exchangeCoefficient += (self.exchangeCoefficientUpdateRate * math.pow(self.totalBalance, self.epsilon)
                                    - self.exchangeCoefficient) * update_rate
 
     def __make_perturbations(self, perturbation_type):
@@ -171,16 +172,16 @@ class Simulation:
         # 2 indicates instant increase/decrease in exchange coefficient
         # else indicates doing nothing
         if perturbation_type == 1:
-            if self.round == 125000:
+            if self.round == 150000:
                 self.totalBalance *= 0.975
-            elif self.round == 250000:
+            elif self.round == 300000:
                 self.totalBalance *= 1.025
 
         elif perturbation_type == 2:
-            if self.round == 125000:
+            if self.round == 150000:
                 self.exchangeCoefficient *= 1.025
-            elif self.round == 250000:
-                self.exchangeCoefficient /= 1.025
+            elif self.round == 300000:
+                self.exchangeCoefficient *= 0.975
         else:
             pass
 

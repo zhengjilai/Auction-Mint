@@ -27,14 +27,14 @@ if __name__ == '__main__':
     # 1 indicates instant increase/decrease in total supply
     # 2 indicates instant increase/decrease in fisher coefficient
     # else for doing nothing
-    perturbation_type = 2
+    perturbation_type = 1
 
     # the simulation object
     simulation = Simulation(totalBalance, blockReward, miningExpense, bidWinner,
                             transactionFees, traceTag, perturbation_type)
 
     # simulate round by round
-    totalRound = 400000
+    totalRound = 500000
     for i in range(totalRound):
         simulation.single_round()
 
