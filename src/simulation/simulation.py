@@ -26,16 +26,17 @@ class Simulation:
         self.transactionFeePredict = tf
 
         '''
-        # the fluctuating fisher coefficient and the base fisher coefficient
-        self.fisherCoefficient = tf / tb
-        self.fisherCoefficientAtFirst = self.fisherCoefficient
+        # the fluctuating exchange coefficient and the base exchange coefficient
+        self.exchangeCoefficient = tf / tb
+        self.exchangeCoefficientAtFirst = self.exchangeCoefficient
         '''
 
-        # the fluctuating fisher coefficient
-        self.fisherCoefficient = tf / tb
-        # the fisher coefficient update rate
-        # Here we assume that the expected fisherCoeff = updateRate * sqrt(totalBalance), were updateRate is a constant
-        self.fisherCoefficientUpdateRate = self.fisherCoefficient / math.sqrt(tb)
+        # the fluctuating exchange coefficient
+        self.exchangeCoefficient = tf / tb
+        # the exchange coefficient update rate
+        # Here we assume that the expected exchangeCoeff = updateRate * sqrt(totalBalance),
+        # where updateRate is a constant
+        self.exchangeCoefficientUpdateRate = self.exchangeCoefficient / math.sqrt(tb)
 
         # the number of former rounds used to predict the next round transaction fee
         self.predictRoundNumber = 100
@@ -71,11 +72,11 @@ class Simulation:
         # concatenate self.result with info of this round
         self.result = np.concatenate((self.result, round_info), axis=0)
 
-        # update totalBalance, blockReward, miningCost and fisherCoefficient for the next round, optional
+        # update totalBalance, blockReward, miningCost and exchangeCoefficient for the next round, optional
         self.__update_total_balance(bid_price)
         # self.__update_block_reward_from_total_balance()
         # self.__update_mining_cost_from_total_balance()
-        self.__update_fisher_coefficient_from_total_balance()
+        self.__update_exchange_coefficient_from_total_balance()
         
         # update transaction fee for the next round
         self.transactionFeePredict = self.__update_predict_transaction_fee_from_total_balance()
@@ -123,15 +124,15 @@ class Simulation:
                           - self.result[self.round - self.predictRoundNumber][3]
                           + self.result[self.round][3]) / self.predictRoundNumber
 
-        # modify the prediction with Fisher equation of exchange
+        # modify the prediction with Exchange equation of exchange
         return feeMidCalc / self.result[self.round][1] * self.totalBalance
     '''
 
     def __update_predict_transaction_fee_from_total_balance(self):
 
         # calc the predicted tx fee for the next round
-        # calculate the expected tx fee from total balance, with Fisher equation of exchange
-        expected_fee = self.totalBalance * self.fisherCoefficient
+        # calculate the expected tx fee from total balance, with Exchange equation of exchange
+        expected_fee = self.totalBalance * self.exchangeCoefficient
 
         # sample from nor distribution
         return sample_from_norm_distribution(expected_fee, expected_fee / 40)
@@ -147,27 +148,27 @@ class Simulation:
         self.miningExpense = self.miningExpenseRate * self.totalBalance
 
     '''
-    def __update_fisher_coefficient_from_total_balance(self):
+    def __update_exchange_coefficient_from_total_balance(self):
 
-        # calc the fisher coefficient for the next round
+        # calc the exchange coefficient for the next round
         update_rate = 1/15000
-        self.fisherCoefficient += (self.fisherCoefficientAtFirst / self.result[0][1] * self.totalBalance
-                                   - self.fisherCoefficient) * update_rate
+        self.exchangeCoefficient += (self.exchangeCoefficientAtFirst / self.result[0][1] * self.totalBalance
+                                   - self.exchangeCoefficient) * update_rate
     '''
 
-    def __update_fisher_coefficient_from_total_balance(self):
+    def __update_exchange_coefficient_from_total_balance(self):
 
-        # calc the fisher coefficient for the next round
+        # calc the exchange coefficient for the next round
         update_rate = 1/15000
-        # gradually update fisherCoefficient to the expected one
-        self.fisherCoefficient += (self.fisherCoefficientUpdateRate * math.sqrt(self.totalBalance)
-                                   - self.fisherCoefficient) * update_rate
+        # gradually update exchangeCoefficient to the expected one
+        self.exchangeCoefficient += (self.exchangeCoefficientUpdateRate * math.sqrt(self.totalBalance)
+                                   - self.exchangeCoefficient) * update_rate
 
     def __make_perturbations(self, perturbation_type):
 
         # perturbation type decides which kind of perturbation will be deployed
         # 1 indicates instant increase/decrease in total supply
-        # 2 indicates instant increase/decrease in fisher coefficient
+        # 2 indicates instant increase/decrease in exchange coefficient
         # else indicates doing nothing
         if perturbation_type == 1:
             if self.round == 125000:
@@ -177,9 +178,9 @@ class Simulation:
 
         elif perturbation_type == 2:
             if self.round == 125000:
-                self.fisherCoefficient *= 1.025
+                self.exchangeCoefficient *= 1.025
             elif self.round == 250000:
-                self.fisherCoefficient /= 1.025
+                self.exchangeCoefficient /= 1.025
         else:
             pass
 
@@ -193,7 +194,7 @@ class Simulation:
             print("Mining cost: ", self.miningExpense, self.miningExpense / self.totalBalance)
             print("Block Reward: ", self.blockReward, self.blockReward / self.totalBalance)
             print("Bid Price: ", bid_price, bid_price / self.totalBalance)
-            print("Fisher Coefficient: ", self.fisherCoefficient)
+            print("Exchange Coefficient: ", self.exchangeCoefficient)
             print("====================================")
 
     def draw_time_series(self):
