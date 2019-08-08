@@ -6,7 +6,7 @@ import math
 # class for aucMint simulation
 class Simulation:
 
-    def __init__(self, tb, br, me, bw, tf, tt=True, cprop=False, rprop=False, pt=0):
+    def __init__(self, tb, br, me, bw, tf, tt=True, cprop=False, rprop=False, pt=0, gamma=0.5):
 
         # system total balance
         self.totalBalance = tb
@@ -25,22 +25,13 @@ class Simulation:
         # the transaction fee predicted from total balance,
         self.transactionFeePredict = tf
 
-        '''
-        # the fluctuating exchange coefficient and the base exchange coefficient
-        self.exchangeCoefficient = tf / tb
-        self.exchangeCoefficientAtFirst = self.exchangeCoefficient
-        '''
-
         # the fluctuating exchange coefficient
         self.exchangeCoefficient = tf / tb
         # the exchange coefficient update rate
         # Here we assume that the expected exchangeCoeff = updateRate * sqrt(totalBalance),
         # where updateRate is a constant
-        self.epsilon = 0.5
-        self.exchangeCoefficientUpdateRate = self.exchangeCoefficient / math.pow(self.totalBalance, self.epsilon)
-
-        # the number of former rounds used to predict the next round transaction fee
-        self.predictRoundNumber = 100
+        self.gamma = gamma
+        self.exchangeCoefficientUpdateRate = self.exchangeCoefficient / math.pow(self.totalBalance, self.gamma)
 
         # simulation round
         # initialized as 1
@@ -116,25 +107,6 @@ class Simulation:
         # in each round, token for bid will burnt
         self.totalBalance -= (self.bidWinner * bid_price)
 
-    '''
-    # deprecated
-    def __update_predict_transaction_fee_with_former_fee(self):
-
-        # calc the predicted tx fee for the next round
-        # before self.predictRoundNumber, minus txfee in round 0
-        if self.round <= self.predictRoundNumber:
-            feeMidCalc = (self.transactionFeePredict * self.predictRoundNumber
-                          - self.result[0][3] + self.result[self.round][3]) / self.predictRoundNumber
-        # after that, minus txfee in round self.round - self.predictRoundNumber
-        else:
-            feeMidCalc = (self.transactionFeePredict * self.predictRoundNumber
-                          - self.result[self.round - self.predictRoundNumber][3]
-                          + self.result[self.round][3]) / self.predictRoundNumber
-
-        # modify the prediction with Exchange equation of exchange
-        return feeMidCalc / self.result[self.round][1] * self.totalBalance
-    '''
-
     def __update_predict_transaction_fee_from_total_balance(self):
 
         # calc the predicted tx fee for the next round
@@ -154,21 +126,12 @@ class Simulation:
         # calc the mining cost for the next round
         self.miningExpense = self.miningExpenseRate * self.totalBalance
 
-    '''
-    def __update_exchange_coefficient_from_total_balance(self):
-
-        # calc the exchange coefficient for the next round
-        update_rate = 1/15000
-        self.exchangeCoefficient += (self.exchangeCoefficientAtFirst / self.result[0][1] * self.totalBalance
-                                   - self.exchangeCoefficient) * update_rate
-    '''
-
     def __update_exchange_coefficient_from_total_balance(self):
 
         # calc the exchange coefficient for the next round
         update_rate = 1/15000
         # gradually update exchangeCoefficient to the expected one
-        self.exchangeCoefficient += (self.exchangeCoefficientUpdateRate * math.pow(self.totalBalance, self.epsilon)
+        self.exchangeCoefficient += (self.exchangeCoefficientUpdateRate * math.pow(self.totalBalance, self.gamma)
                                    - self.exchangeCoefficient) * update_rate
 
     def __make_perturbations(self, perturbation_type):
