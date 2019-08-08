@@ -6,7 +6,7 @@ import math
 # class for aucMint simulation
 class Simulation:
 
-    def __init__(self, tb, br, me, bw, tf, tt=True, pt=0):
+    def __init__(self, tb, br, me, bw, tf, tt=True, cprop=False, rprop=False, pt=0):
 
         # system total balance
         self.totalBalance = tb
@@ -48,6 +48,10 @@ class Simulation:
 
         # if simulation needs to be traced
         self.traceTag = tt
+        # True if use C-prop, False to use C-const
+        self.update_mining_cost_tag = cprop
+        # True if use R-prop, False to use R-const
+        self.update_block_reward_tag = rprop
 
         # the perturbation type
         self.perturbation_type = pt
@@ -75,8 +79,10 @@ class Simulation:
 
         # update totalBalance, blockReward, miningCost and exchangeCoefficient for the next round, optional
         self.__update_total_balance(bid_price)
-        # self.__update_block_reward_from_total_balance()
-        # self.__update_mining_cost_from_total_balance()
+        if self.update_block_reward_tag:
+            self.__update_block_reward_from_total_balance()
+        if self.update_mining_cost_tag:
+            self.__update_mining_cost_from_total_balance()
         self.__update_exchange_coefficient_from_total_balance()
         
         # update transaction fee for the next round

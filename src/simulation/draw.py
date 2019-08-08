@@ -73,3 +73,34 @@ def draw_plain(axis_x, axis_y, label_x="label_x", label_y="label_y"):
     ax.xaxis.set_major_formatter(formatter2)
     plt.show()
 
+'''
+draw multiple lines with the same axis_x
+'''
+def draw_multiple(axis_x, axis_y, labels, label_x="label_x", label_y="label_y"):
+
+    if len(axis_y) > 4:
+        return
+
+    # colors and line styles for drawing
+    colors = ["firebrick", "goldenrod", "dodgerblue", "forestgreen"]
+    line_styles = ["-", "-", "-", "-"]
+
+    # draw the original data
+    fig, ax = plt.subplots(1)
+
+    for i in range(len(axis_y)):
+        ax.plot(axis_x, axis_y[i], color=colors[i], linestyle=line_styles[i], label=labels[i])
+
+    ax.set_xlabel(label_x)
+    ax.set_ylabel(label_y)
+
+    formatter = mticker.ScalarFormatter(useMathText=True)
+    formatter.set_scientific(True)
+    formatter.set_powerlimits((-1, 1))
+    ax.yaxis.set_major_formatter(formatter)
+    formatter2 = mticker.ScalarFormatter(useMathText=True)
+    formatter2.set_scientific(True)
+    formatter2.set_powerlimits((-1, 1))
+    ax.xaxis.set_major_formatter(formatter2)
+    plt.legend(loc='best')
+    plt.show()
