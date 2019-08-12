@@ -99,5 +99,5 @@ def draw_multiple(axis_x, axis_y, labels, colors, line_styles, label_x="label_x"
     formatter2.set_scientific(True)
     formatter2.set_powerlimits((-1, 1))
     ax.xaxis.set_major_formatter(formatter2)
-    plt.legend(loc='upper left', labelspacing=0)
+    plt.legend(loc='best', labelspacing=0)
     plt.show()

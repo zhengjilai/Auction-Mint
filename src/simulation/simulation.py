@@ -6,7 +6,7 @@ import math
 # class for aucMint simulation
 class Simulation:
 
-    def __init__(self, tb, br, me, bw, tf, tt=True, cprop=False, rprop=False, pt=0, gamma=0.5):
+    def __init__(self, tb, br, me, bw, tf, tt=True, cprop=False, rprop=False, pt=0, gamma=0.5, ur=1/15000):
 
         # system total balance
         self.totalBalance = tb
@@ -46,6 +46,9 @@ class Simulation:
 
         # the perturbation type
         self.perturbation_type = pt
+
+        # the update rate of exchange coefficient
+        self.updateRate = ur
 
         # simulation result
         # [round, totalBalance, bidPrice. txFee]
@@ -129,10 +132,9 @@ class Simulation:
     def __update_exchange_coefficient_from_total_balance(self):
 
         # calc the exchange coefficient for the next round
-        update_rate = 1/15000
-        # gradually update exchangeCoefficient to the expected one
+        # gradually update exchangeCoefficient to the expected ex coefficient
         self.exchangeCoefficient += (self.exchangeCoefficientUpdateRate * math.pow(self.totalBalance, self.gamma)
-                                   - self.exchangeCoefficient) * update_rate
+                                   - self.exchangeCoefficient) * self.updateRate
 
     def __make_perturbations(self, perturbation_type):
 
