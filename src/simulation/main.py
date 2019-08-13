@@ -79,7 +79,8 @@ def ablation_simulation():
     update_mining_cost_tag = False
     # True if use R-prop, False to use R-const
     update_block_reward_tag = False
-    # the simulation object
+
+    # the simulation objects
     simulation_constC_constR = Simulation(total_balance, block_reward, mining_expense, bid_winner,
                             transaction_fees, trace_tag, update_mining_cost_tag,
                             update_block_reward_tag, perturbation_type)

@@ -27,11 +27,13 @@ class Simulation:
 
         # the fluctuating exchange coefficient
         self.exchangeCoefficient = tf / tb
-        # the exchange coefficient update rate
-        # Here we assume that the expected exchangeCoeff = updateRate * sqrt(totalBalance),
-        # where updateRate is a constant
+        # the update rate of exchange coefficient
+        self.updateRate = ur
+        # the exchange coefficient constant
+        # Here we assume that the target exchangeCoefficient = exCoeffConstant * pow(totalBalance, gamma),
+        # where exCoeffConstant is a constant throughout the simulation
         self.gamma = gamma
-        self.exchangeCoefficientUpdateRate = self.exchangeCoefficient / math.pow(self.totalBalance, self.gamma)
+        self.exCoeffConstant = self.exchangeCoefficient / math.pow(self.totalBalance, self.gamma)
 
         # simulation round
         # initialized as 1
@@ -46,9 +48,6 @@ class Simulation:
 
         # the perturbation type
         self.perturbation_type = pt
-
-        # the update rate of exchange coefficient
-        self.updateRate = ur
 
         # simulation result
         # [round, totalBalance, bidPrice. txFee]
@@ -133,7 +132,7 @@ class Simulation:
 
         # calc the exchange coefficient for the next round
         # gradually update exchangeCoefficient to the expected ex coefficient
-        self.exchangeCoefficient += (self.exchangeCoefficientUpdateRate * math.pow(self.totalBalance, self.gamma)
+        self.exchangeCoefficient += (self.exCoeffConstant * math.pow(self.totalBalance, self.gamma)
                                    - self.exchangeCoefficient) * self.updateRate
 
     def __make_perturbations(self, perturbation_type):
