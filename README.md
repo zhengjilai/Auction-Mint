@@ -1,4 +1,4 @@
-# auction_mint
+# Auction-Mint
 A solidity implementation of Auction-Mint and its corresponding python simulation.
 Our paper will be re-directed from this repo if published finally (TAT).
 
