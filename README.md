@@ -1,6 +1,6 @@
 # auction_mint
 A solidity implementation of Auction-Mint and its corresponding python simulation.
-Our paper will be directed from this repo if published finally (TAT).
+Our paper will be re-directed from this repo if published finally (TAT).
 
 ## Usage
 For Solidity, please refer to [remix](https://remix.ethereum.org/) for executions.
