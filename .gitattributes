@@ -1,0 +1,2 @@
+*.py linguist-language=python
+*.sol linguist-language=solidity
